@@ -1,8 +1,10 @@
-﻿using PostsAPI.Models;
+﻿using PostsAPI.CQRS.Commands;
+using PostsAPI.CQRS.Queries;
+using PostsAPI.Models;
 
 namespace PostsAPI.Services;
 
-public class PostsService : IPostsService
+public class PostsService : IPostServiceCommands, IPostServiceQueries
 {
     public string CreatePost(Post post)
     {

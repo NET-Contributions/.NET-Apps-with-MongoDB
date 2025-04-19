@@ -1,8 +1,10 @@
-﻿using PostsAPI.Models;
+﻿using PostsAPI.CQRS.Commands;
+using PostsAPI.CQRS.Queries;
+using PostsAPI.Models;
 
 namespace PostsAPI.Services;
 
-public class BlogsService : IBlogsService
+public class BlogsService : IBlogsServiceCommands, IBlogServiceQueries
 {
     public string CreateBlog(Blog blog)
     {

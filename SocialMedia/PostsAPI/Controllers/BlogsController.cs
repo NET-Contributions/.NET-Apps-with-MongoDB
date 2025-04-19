@@ -1,18 +1,25 @@
-﻿using PostsAPI.Models;
-using PostsAPI.Services;
+﻿using PostsAPI.CQRS.Commands;
+using PostsAPI.CQRS.Queries;
+using PostsAPI.Models;
 using System.Web.Mvc;
 
 namespace PostsAPI.Controllers;
 
 public class BlogsController : Controller
 {
+
     ILogger<Blog> _loggerBlog;
-    IBlogsService _blogService;
+
+    //For Notice: Here we are using the CQRS pattern to separate the commands and queries
+    IBlogsServiceCommands _commands;
+    IBlogServiceQueries _queries;
+
     public BlogsController(
-        ILogger<Blog> loggerBlog, IBlogsService blogService)
+        ILogger<Blog> loggerBlog, IBlogsServiceCommands commands, IBlogServiceQueries queries)
     {
         _loggerBlog = loggerBlog;
-        _blogService = blogService;
+        _commands = commands;
+        _queries = queries;
     }
 
     [HttpGet]
@@ -21,7 +28,7 @@ public class BlogsController : Controller
     {
         _loggerBlog.LogInformation("Retrieving blogs... ");
 
-        var blogs = _blogService.GetBlogList();
+        var blogs = _queries.GetBlogList();
 
         return View("blogs", blogs);
     }
@@ -32,7 +39,7 @@ public class BlogsController : Controller
     {
         _loggerBlog.LogInformation("Creating blog... ");
        
-        var result = _blogService.CreateBlog(blog);
+        var result = _commands.CreateBlog(blog);
 
         if (result == null)
         {

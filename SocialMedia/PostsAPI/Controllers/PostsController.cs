@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using PostsAPI.CQRS.Commands;
+using PostsAPI.CQRS.Queries;
 using PostsAPI.Models;
-using PostsAPI.Services;
 
 namespace PostsAPI.Controllers;
 
@@ -9,11 +10,17 @@ namespace PostsAPI.Controllers;
 public class PostsController : Controller
 {
     ILogger<Post> _loggerPost;
-    IPostsService _post;
+
+    //For Notice: Here we are using the CQRS pattern to separate the commands and queries
+    IPostServiceCommands _commands;
+    IPostServiceQueries _queries;
+
     public PostsController(
-        ILogger<Post> loggerPost, IPostsService post)
+        ILogger<Post> loggerPost, IPostServiceCommands post, IPostServiceQueries queries)
     {
         _loggerPost = loggerPost;
+        _commands = post;
+        _queries = queries;
     }
 
     [HttpGet]
@@ -22,7 +29,7 @@ public class PostsController : Controller
     {
         _loggerPost.LogInformation("Retrieving posts... ");
 
-        var posts = _post.GetPosts();
+        var posts = _queries.GetPosts();
 
         return View("posts", posts);
     }
@@ -33,7 +40,7 @@ public class PostsController : Controller
     {
         _loggerPost.LogInformation("Creating posts... ");
 
-        var createPost = _post.CreatePost(post);
+        var createPost = _commands.CreatePost(post);
 
         if (createPost == null)
             return BadRequest("Post creation failed.");
