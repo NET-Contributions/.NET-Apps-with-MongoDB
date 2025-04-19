@@ -1,7 +1,6 @@
-﻿using BlogsPosts.Models;
-
-
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
+using PostsAPI.Models;
+using PostsAPI.Services;
 
 namespace PostsAPI.Controllers;
 
@@ -9,19 +8,38 @@ namespace PostsAPI.Controllers;
 [Route("api/{controller}")]
 public class PostsController : Controller
 {
-    ILogger<Posts> _posts
-    public PostsController()
+    ILogger<Post> _loggerPost;
+    IPostsService _post;
+    public PostsController(
+        ILogger<Post> loggerPost, IPostsService post)
     {
-
+        _loggerPost = loggerPost;
     }
 
     [HttpGet]
     [Route("/posts")]
     public ActionResult Index()
     {
-        return View("");
+        _loggerPost.LogInformation("Retrieving posts... ");
+
+        var posts = _post.GetPosts();
+
+        return View("posts", posts);
     }
 
     [HttpPost]
-    public 
+    [Route("/createPost")]
+    public ActionResult CreatePost(Post post)
+    {
+        _loggerPost.LogInformation("Creating posts... ");
+
+        var createPost = _post.CreatePost(post);
+
+        if (createPost == null)
+            return BadRequest("Post creation failed.");
+
+        _loggerPost.LogInformation("Post created successfully.");
+
+        return View("post");
+    }
 }

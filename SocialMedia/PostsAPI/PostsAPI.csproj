@@ -12,7 +12,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="MongoDBSettings\Entities\" />
     <Folder Include="MongoDBSettings\Repositories\" />
   </ItemGroup>
 
